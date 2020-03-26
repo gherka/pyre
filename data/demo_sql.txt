@@ -1,0 +1,37 @@
+WITH T AS
+	(
+		SELECT
+			CASE
+				WHEN extract(month FROM CLINIC_DATE) > 3
+					THEN extract(year FROM CLINIC_DATE)
+					ELSE extract(year FROM CLINIC_DATE) -1
+			END as FIN_YEAR    ,
+			CLINIC_ATTENDANCE  ,
+			HBTREAT_CURRENTDATE,
+			CLINIC_TYPE        ,
+			REFERRAL_SOURCE    ,
+			REFERRAL_TYPE
+		FROM
+			ANALYSIS.SMR00_PI
+		WHERE
+			HBTREAT_CURRENTDATE = 'S08000019'
+			AND CLINIC_DATE    >= to_date('2014-01-01', 'yyyy-MM-dd')
+			AND CLINIC_DATE    <= to_date('2018-10-01', 'yyyy-MM-dd')
+	)
+SELECT
+	FIN_YEAR           ,
+	HBTREAT_CURRENTDATE,
+	CLINIC_ATTENDANCE  ,
+	CLINIC_TYPE        ,
+	REFERRAL_SOURCE    ,
+	REFERRAL_TYPE      ,
+	count(*) as Total_Episodes
+FROM
+	T
+GROUP BY
+	FIN_YEAR           ,
+	HBTREAT_CURRENTDATE,
+	CLINIC_ATTENDANCE  ,
+	CLINIC_TYPE        ,
+	REFERRAL_SOURCE    ,
+	REFERRAL_TYPE
